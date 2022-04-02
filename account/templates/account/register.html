@@ -1,0 +1,80 @@
+{% extends 'account/base.html' %} 
+{% load i18n %} 
+
+{% block title %}
+    {% trans "Pendaftaran Akun" %} 
+{% endblock title %} 
+
+{% block content %} 
+    <div class="container">
+        <div class="row justify-content-center mt-2">
+            <h1 class="text-center">{% trans "Pendaftaran Akun" %}</h1>
+            <div class="col-lg-8">
+                <div class="row justify-content-center mt-1">
+                    <form action="" method="post" id="registerForm">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.first_name.label }}
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.last_name.label }}
+                                {{ form.last_name }}
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.username.label }}
+                                {{ form.username }}
+                                <div class="form-text">
+                                    {{ form.username.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.email.label }}
+                                {{ form.email }}
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.password1.label }}
+                                {{ form.password1 }}
+                                <div class="form-text">
+                                    {{ form.password1.help_text }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                {{ form.password2.label }}
+                                {{ form.password2 }}
+                                <div class="form-text">
+                                    {{ form.password2.help_text }}
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <span class="text-muted">
+                                    {% blocktranslate %} 
+                                        Sudah mempunyai akun, silahkan login melalui halaman <a href="/account/login/">login berikut ini.</a>
+                                    {% endblocktranslate %}
+                                </span>
+                                <button type="submit" class="btn btn-primary">{% trans "Daftar" %}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %} 
+
+{% block js %} 
+{% if messages %} 
+<!-- Alert -->
+    {% for message in messages %} 
+        <script>
+            Swal.fire(
+                "{% if message.tags == 'error' %}{% trans 'Maaf Ada Kesalahan' %}{% else %}{% trans 'Berhasil' %}{% endif %}",
+                "{{ message | safe }}",
+                "{{ message.tags }}"
+            )
+        </script>
+    {% endfor %} 
+<!-- End Alert -->
+{% endif %}
+{% endblock js %}

@@ -1,0 +1,55 @@
+{% extends 'account/base.html' %} 
+{% load i18n %} 
+
+{% block title %}
+    {% trans "Login Akun" %} 
+{% endblock title %} 
+
+{% block content %} 
+    <div class="container">
+        <div class="row justify-content-center mt-2">
+            <h1 class="text-center">{% trans "Login Akun" %}</h1>
+            <div class="col-lg-8">
+                <div class="row justify-content-center mt-1">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6 form-group mb-2">
+                                <label for="username">{% translate "Nama pengguna" %}</label>
+                                <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                            </div>
+                            <div class="col-sm-6 form-group mb-2">
+                                <label for="password">{% trans "Kata sandi" %}</label>
+                                <input type="password" name="password" id="id_password" class="form-control" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <span class="text-muted">
+                                    {% blocktranslate %} 
+                                        Belum mempunyai akun, silahkan daftar melalui halaman <a href="/account/register/">pendaftaran berikut ini.</a>
+                                    {% endblocktranslate %}
+                                </span>
+                                <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %} 
+
+{% block js %} 
+{% if messages %} 
+<!-- Alert -->
+    {% for message in messages %} 
+        <script>
+            Swal.fire(
+                "{% if message.tags == 'success' %}Success!{% elif message.tags == 'info' %}Info!{% elif message.tags == 'warning' %}Warning!{% elif message.tags == 'error' %}Error!{% endif %}",
+                "{{ message | safe }}",
+                "{{ message.tags }}"
+            )
+        </script>
+    {% endfor %} 
+<!-- End Alert -->
+{% endif %}
+{% endblock js %}
