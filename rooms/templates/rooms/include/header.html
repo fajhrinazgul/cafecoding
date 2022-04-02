@@ -1,0 +1,83 @@
+<!-- Navbar -->
+{% load i18n %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Kafe Koding</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if is_index_active %}active{% endif %}" aria-current="page" href="{% url 'rooms:index' %}">
+                        <i class="fas fa-house"></i>
+                        {% trans "Beranda" %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="login.html">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="login.html">Contact</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link {% if is_room_active %}active{% endif %} dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "Kelas" %}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown"> 
+                        {% for room in rooms %}
+                            <li><a class="dropdown-item" href="#">{{ room.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link disabled">Disabled</a>
+                </li> -->
+
+                {# if user is authenticated #}
+                {% if not request.user.is_authenticated %}  
+                <li class="nav-item">
+                    <a href="/account/register" class="nav-link">{% translate "Daftar" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/account/login" class="nav-link">{% translate "Login" %}</a>
+                </li>
+                {% else %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ request.user.get_full_name }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">{% trans "Akun" %}</a></li>
+                        <li><a class="dropdown-item" href="#">{% trans "Pengaturan" %}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'account:logout' %}">{% trans "Keluar" %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<!-- End Navbar -->
+
+<button class="btn btn-danger to-top-btn" id="toTopBtn">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Header -->
+<div id="header" class="header">
+    <div class="header-desc">
+        <h1>Kafe Koding</h1>
+        <p class="fw-bold text-warning" style="font-size: 15pt;"><u>Kami Memilih Turun Tangan</u></p>
+        <a href="#content" class="btn btn-danger">
+            <i class="fas fa-arrow-down"></i>
+        </a>
+    </div>
+</div>
+<!-- End Header -->

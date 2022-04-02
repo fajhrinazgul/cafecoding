@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %} | KafeKoding</title>
+    {% load static i18n %}
+    <!-- Source -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <!-- Font Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;1,200;1,300;1,400&display=swap" rel="stylesheet"> 
+    <style>
+        .no-arrow {
+            content: none;
+        }
+        #toTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            z-index: 100;
+            cursor: pointer;
+            border-radius: .8rem;
+        }
+    </style>
+</head>
+<body>
+
+    {# Header #} 
+        {% include "rooms/include/header.html" %} 
+    {# End Header #}
+
+    {# Content #} 
+        {% block content %}{% endblock content %}
+    {# End Content #}
+
+    <!-- Source Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="{% static 'js/style.js' %}"></script>
+    <script>
+        // toTopBtn
+        $(document).ready(function () {
+            $(window).scroll(function() {
+                if ( $(this).scrollTop() > 100) {
+                    $("#toTopBtn").fadeIn();
+                } 
+                else {
+                    $("#toTopBtn").fadeOut();
+                }
+            });
+            $("#toTopBtn").click(function () {
+                // $("html, body").animate({
+                //     scrollTop: 0
+                // }, 700);
+                $("html, body").animate({
+                    scrollTop: 0
+                }, "slow")
+                return false;
+            })
+        });
+    </script>
+    {% block js %} 
+
+    {% endblock js %}
+</body>
+</html>

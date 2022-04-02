@@ -1,0 +1,127 @@
+{% extends "rooms/base.html" %} 
+{% load i18n %}
+
+{% block title %} 
+    {{ room.title }} 
+{% endblock title %}
+
+{% block content %} 
+    <div class="container mt-5" id="content">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="text-danger fw-bold text-decoration-underline">
+                    {% trans "Kelas" %} {{ room.title }}
+                </h1>
+                {% if request.user in room.member.all %}
+                    <button type="button" class="btn btn-danger" onclick="quitTheGrub();">{% trans "Keluar Room" %}</button>
+                {% else %}
+                    <button type="button" class="btn btn-primary" onclick="joinTheGrub();">{% trans "Gabung Room" %}</button>
+                {% endif %}
+            </div>
+        <div class="row">
+            <div class="col-lg-8 mb-2">
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{ room.logo.url }}" alt="" class="img-fluid float-start me-3" width="200" height="200">
+                        {{ room.content | safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>{% trans "Daftar Mentor" %}</h4>
+                        <table class="table table-responsive table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">{% trans "Nama" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mentor in room.mentor.all %} 
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ mentor.get_full_name }}</td>
+                                    </tr>
+                                {% endfor %} 
+                            </tbody>
+                        </table>
+                        
+                        <h4>{% trans "Daftar Anggota" %}</h4>
+                        <table class="table table-responsive table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">{% trans "Nama" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in room.member.all %} 
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ member.get_full_name }}</td>
+                                    </tr>
+                                {% endfor %} 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %} 
+<script>
+    function joinTheGrub() {
+        // Button join the grub
+        Swal.fire({
+            title: "{% trans 'Apakah Anda yakin untuk bergabung?' %}",
+            showDenyButton: true,
+            confirmButtonText: "{% trans 'Iya' %}",
+            denyButtonText: `{% trans 'Batal' %}`,
+            // cancelButtonText: "{% trans '"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = "/join/{{ room.id }}/{{ request.user.username }}/";
+            }
+            else {
+                Swal.fire("Canceled", "", "warning");
+            }
+        })
+    }
+
+    function quitTheGrub() {
+        // Click button quit the room
+        Swal.fire({
+            title: "{% trans 'Apakah Anda yakin untuk keluar?' %}",
+            showDenyButton: true,
+            confirmButtonText: "{% trans 'Iya' %}",
+            denyButtonText: `{% trans 'Batal' %}`,
+            // cancelButtonText: "{% trans '"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = "/quit/{{ room.id }}/{{ request.user.username }}/";
+            }
+            else {
+                Swal.fire("Canceled", "", "warning");
+            }
+        })
+    }
+</script>
+
+{% if messages %} 
+<!-- Alert -->
+    {% for message in messages %} 
+        <script>
+            Swal.fire(
+                "{% if message.tags == 'success' %}Success!{% elif message.tags == 'info' %}Info!{% elif message.tags == 'warning' %}Warning!{% elif message.tags == 'error' %}Error!{% endif %}",
+                "{{ message | safe }}",
+                "{{ message.tags }}"
+            )
+        </script>
+    {% endfor %} 
+<!-- End Alert -->
+{% endif %}
+
+{% endblock js %} 
