@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-01 01:48+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: account/models.py:20
+msgid "Perempuan"
+msgstr "Female"
+
+#: account/models.py:21
+msgid "Laki-laki"
+msgstr "Male"
+
+#: account/models.py:26
+msgid "bio"
+msgstr "bio"
+
+#: account/models.py:27
+msgid "foto profile"
+msgstr "photo profile"
+
+#: account/models.py:29
+msgid "nomor induk mahasiswa"
+msgstr "Number of Student"
+
+#: account/models.py:30
+msgid "jenis kelamin"
+msgstr "gender"
+
+#: account/templates/account/login.html:5
+#: account/templates/account/login.html:11
+msgid "Login Akun"
+msgstr "Login Account"
+
+#: account/templates/account/login.html:30
+msgid "Nama pengguna"
+msgstr "Username"
+
+#: account/templates/account/login.html:34
+msgid "Kata sandi"
+msgstr "Password"
+
+#: account/templates/account/login.html:39
+msgid ""
+" \n"
+"                                        Belum mempunyai akun, silahkan "
+"daftar melalui halaman <a href=\"/account/register/\">pendaftaran berikut "
+"ini.</a>\n"
+"                                    "
+msgstr ""
+" \n"
+"                                        You not have a account, please "
+"register from this <a href=\"/account/register/\">register page.</a>\n"
+"                                     "
+
+#: account/templates/account/login.html:43
+#: account/templates/account/register.html:68
+#: rooms/templates/rooms/base.html:75
+msgid "Daftar"
+msgstr ""
+
+#: account/templates/account/register.html:5
+#: account/templates/account/register.html:11
+msgid "Pendaftaran Akun"
+msgstr ""
+
+#: account/templates/account/register.html:64
+msgid ""
+" \n"
+"                                        Sudah mempunyai akun, silahkan login "
+"melalui halaman <a href=\"/account/login/\">login berikut ini.</a>\n"
+"                                    "
+msgstr ""
+
+#: account/views.py:21
+msgid ""
+"Selamat akun dengan nama pengguna <b>{self.request.POST['username']}</b> "
+"berhasil didaftarkan. "
+msgstr ""
+
+#: account/views.py:28
+msgid "Opps!!! Ada suatu masalah saat mendaftarkan akun Anda. "
+msgstr ""
+
+#: account/views.py:53
+msgid ""
+"Mohon maaf kata sandi yang anda masukkan salah. Silahkan ulangi lagi atau "
+"daftar terlebih dahulu "
+msgstr ""
+
+#: rooms/models.py:16
+msgid "title"
+msgstr ""
+
+#: rooms/models.py:16
+msgid "Masukkan nama kelas yang akan di sediakan."
+msgstr ""
+
+#: rooms/models.py:17
+msgid "deskripsi"
+msgstr ""
+
+#: rooms/models.py:18
+msgid "aktif"
+msgstr ""
+
+#: rooms/models.py:20
+msgid "dibuat"
+msgstr ""
+
+#: rooms/models.py:31
+msgid "logo"
+msgstr ""
+
+#: rooms/models.py:33
+msgid "jam buka"
+msgstr ""
+
+#: rooms/models.py:34
+msgid "jam tutup"
+msgstr ""
+
+#: rooms/templates/rooms/base.html:78
+msgid "Login"
+msgstr ""
