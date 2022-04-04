@@ -1,0 +1,95 @@
+{% extends "rooms/base.html" %} 
+{% load i18n %} 
+
+{% block title %} 
+    Edit 
+{% endblock title %}
+
+{% block content %} 
+    <div class="container mt-5" id="content">
+        <div class="row justify-content-center">
+            <h1>Edit {{ room.title }}</h1>
+            <form action="" method="post" id="editForm" enctype="multipart/form-data">
+                {% csrf_token %} 
+                <div class="row justify-content-center">
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.title.label }}
+                        {{ form.title }}
+                        <div class="form-text">
+                            {{ form.title.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.desc.label }}
+                        {{ form.desc }}
+                        <div class="form-text">
+                            {{ form.desc.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.logo.label }}
+                        {{ form.logo }}
+                        <div class="form-text">
+                            {{ form.logo.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.member.label }}
+                        {{ form.member }}
+                        <div class="form-text">
+                            {{ form.member.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-12 form-group mb-2">
+                        {{ form.content.label }}
+                        {{ form.content }}
+                        <div class="form-text">
+                            {{ form.content.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.opened.label }}
+                        {{ form.opened }}
+                        <div class="form-text">
+                            {{ form.opened.help_text }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group mb-2">
+                        {{ form.closed.label }}
+                        {{ form.closed }}
+                        <div class="form-text">
+                            {{ form.closed.help_text }}
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" id="btn-submit" class="btn btn-primary">{% trans "Simpan" %}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %} 
+
+{% block js %} 
+<script>
+    $("#btn-submit").on("click", function(e) {
+        e.preventDefault();
+        let form = $(this).parents("form");
+        // Click button quit the room
+        Swal.fire({
+            title: "{% trans 'Apakah Anda yakin untuk keluar?' %}",
+            showDenyButton: true,
+            confirmButtonText: "{% trans 'Iya' %}",
+            denyButtonText: `{% trans 'Batal' %}`,
+            // cancelButtonText: "{% trans '"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+            else {
+                Swal.fire("Canceled", "", "warning");
+            }
+        });
+    })
+</script>
+{% endblock js %} 

@@ -19,7 +19,7 @@ class CategoriesBase(models.Model):
     """
     title = models.CharField(_("title"), max_length=30, help_text=_("Masukkan nama kelas yang akan di sediakan."))
     slug = models.SlugField()
-    desc = models.TextField(_("deskripsi"), max_length=150)
+    desc = models.TextField(_("deskripsi"), max_length=255)
     is_active = models.BooleanField(_("aktif"), default=False)
     mentor = models.ManyToManyField(AUTH_USER_MODEL, blank=False, related_name="user_mentor_in_rooms")
     created = models.DateTimeField(_("dibuat"), auto_now_add=True)

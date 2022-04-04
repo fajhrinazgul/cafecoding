@@ -11,17 +11,22 @@
                 <h1 class="text-danger fw-bold text-decoration-underline">
                     {% trans "Kelas" %} {{ room.title }}
                 </h1>
-                {% if request.user in room.member.all %}
-                    <button type="button" class="btn btn-danger" onclick="quitTheGrub();">{% trans "Keluar Room" %}</button>
-                {% else %}
+                {% if not request.user in room.mentor.all and not request.user in room.member.all %}
                     <button type="button" class="btn btn-primary" onclick="joinTheGrub();">{% trans "Gabung Room" %}</button>
                 {% endif %}
+                {% if not request.user in room.mentor.all and request.user in room.member.all %}
+                    <button type="button" class="btn btn-danger" onclick="quitTheGrub();">{% trans "Keluar Room" %}</button>
+                {% endif %}
+                {% if request.user in room.mentor.all %}
+                    <button type="button" class="btn btn-info" onclick="editTheGrub();">{% trans "Edit Room" %}</button>
+                {% endif %} 
             </div>
         <div class="row">
             <div class="col-lg-8 mb-2">
                 <div class="card">
                     <div class="card-body">
                         <img src="{{ room.logo.url }}" alt="" class="img-fluid float-start me-3" width="200" height="200">
+                        {{ room.desc | safe }}
                         {{ room.content | safe }}
                     </div>
                 </div>
@@ -102,6 +107,24 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 location.href = "/quit/{{ room.id }}/{{ request.user.username }}/";
+            }
+            else {
+                Swal.fire("Canceled", "", "warning");
+            }
+        })
+    }
+
+    function editTheGrub() {
+        // Click button quit the room
+        Swal.fire({
+            title: "{% trans 'Apakah Anda yakin untuk mengedit room ini?' %}",
+            showDenyButton: true,
+            confirmButtonText: "{% trans 'Iya' %}",
+            denyButtonText: `{% trans 'Batal' %}`,
+            // cancelButtonText: "{% trans '"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = "/edit/{{ room.id }}/#content";
             }
             else {
                 Swal.fire("Canceled", "", "warning");

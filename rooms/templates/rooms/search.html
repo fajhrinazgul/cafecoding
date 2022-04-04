@@ -1,0 +1,62 @@
+{% extends "rooms/base.html" %} 
+{% load i18n %} 
+
+{% block title %}
+    {{ request.user.get_full_name }} 
+{% endblock title %}
+
+{% block content %} 
+    <div class="container mt-5" id="content">
+        <div class="row justify-content-center border p-lg-2" style="border-radius: .8rem;">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="text-danger fw-light text-decoration-underline">{% trans "Daftar Kelas" %}</h1>
+                <button type="button" class="btn btn-danger">
+                    <i class="fas fa-terminal"></i>
+                    Report
+                </button>
+            </div>
+            {% for room in rooms %} 
+                <div class="col-lg-6 mb-2">
+                    <div class="card h-100">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h3 class="fw-bold">{{ room.title }}</h3>
+                            <div class="dropdown">
+                                <a href="#" class="btn" id="dropdownMenuButton{{ room.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ room.id }}">
+                                    <li><a href="#" class="dropdown-item">Action</a></li>
+                                    <li><a href="#" class="dropdown-item">Action</a></li>
+                                    <li><a href="#" class="dropdown-item">Action</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <img src="{{ room.logo.url }}" alt="" height="300" class="card-img-top p-3">
+                        <div class="card-body">
+                            <p class="card-text">
+                                {{ room.desc }}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'rooms:room_detail' room.slug %}#content" class="btn btn-primary">{% trans "Selengkapnya..." %}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %} 
+        </div>
+    </div>
+{% endblock content %} 
+
+{% block js %} 
+    {% if messages %}
+    {% for message in messages %}  
+    <script>
+        Swal.fire(
+            "{% if message.tags == 'success' %}Success!{% elif message.tags == 'info' %}Info!{% elif message.tags == 'warning' %}Warning!{% elif message.tags == 'error' %}Error!{% endif %}",
+            '{{ message | safe }}',
+            '{{ message.tags }}',
+        )
+    </script>
+    {% endfor %} 
+    {% endif %} 
+{% endblock js %} 

@@ -20,16 +20,19 @@
                     <div class="card h-100">
                         <div class="card-header d-flex align-items-center justify-content-between">
                             <h3 class="fw-bold">{{ room.title }}</h3>
+                            {# Permission if user is mentor for this room #} 
+                            {% if request.user in room.mentor.all %} 
                             <div class="dropdown">
                                 <a href="#" class="btn" id="dropdownMenuButton{{ room.id }}" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ room.id }}">
-                                    <li><a href="#" class="dropdown-item">Action</a></li>
-                                    <li><a href="#" class="dropdown-item">Action</a></li>
-                                    <li><a href="#" class="dropdown-item">Action</a></li>
+                                    <li><a href="{% url 'rooms:room_edit' room.pk %}#content" class="dropdown-item">Edit</a></li>
+                                    <li><a href="#" class="dropdown-item">View</a></li>
+                                    <!-- <li><a href="#" class="dropdown-item">Action</a></li> -->
                                 </ul>
                             </div>
+                            {% endif %}
                         </div>
                         <img src="{{ room.logo.url }}" alt="" height="300" class="card-img-top p-3">
                         <div class="card-body">
