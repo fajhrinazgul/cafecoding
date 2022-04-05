@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&@g)t^m!7o6#rjuyh*i5w_(pnzj)=$@u!qxh2v%#!dlz@ddlzp'
+if os.environ.get("SECRET_KEY"):
+    SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+if os.environ.get("DEBUG"):
+    DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = [
     "*",
 ]
+
+if os.environ.get("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -89,6 +97,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+if os.environ.get("DATABASE_URL"):
+    DATABASES["default"] = dj_database_url.config(default=os.environ.get("DATABASE_URL"), conn_max_age=600, ssl_require=True)
 
 
 # Password validation
