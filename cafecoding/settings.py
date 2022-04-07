@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'account',
     'rooms',
     'ckeditor',
+    'ckeditor_uploader',
     'taggit',
 ]
 
@@ -136,12 +137,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 import os
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static", "vendor"),]
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles"),]
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# AWS_QUERYSTRING_AUTH = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -151,6 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CKEDITOR CONFIGS
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_BASEPATH = os.path.join("static", "ckeditor", "ckeditor")
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
