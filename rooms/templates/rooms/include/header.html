@@ -27,7 +27,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown"> 
                         {% for room in rooms %}
-                            <li><a class="dropdown-item" href="#">{{ room.title }}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'rooms:room_detail' room.slug %}#content">{{ room.title }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>

@@ -176,6 +176,16 @@ class RoomUpdateFormView(generic.UpdateView, LoginRequiredMixin):
     form_class = RoomEditForm
     model = Room
     
+    def get(self, request, *args, **kwargs):
+        room = get_object_or_404(Room, pk=kwargs.get("pk"))
+        if request.user not in room.mentor.all():
+            # Jika user yang masuk bukanlah mentor maka akan ditolak
+            messages.warning(request, gettext("Maaf anda tidak berhak mengedit room ini, karena anda bukanlah mentor dari room ini."))
+            return redirect(f"/room/{room.slug}/#content")
+        else:
+            # Jika user adalah mentor maka permintaan akan diterima
+            return render(request, self.template_name, {"form": self.form_class(instance=room), "room": room})
+    
     def form_valid(self, form):
         """Jika form valid maka form akan disimpan
 

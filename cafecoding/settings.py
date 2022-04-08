@@ -30,6 +30,7 @@ if os.environ.get("SECRET_KEY"):
 DEBUG = False
 if os.environ.get("DEBUG"):
     DEBUG = os.environ.get("DEBUG")
+    print(DEBUG)
 
 ALLOWED_HOSTS = [
     "*",
@@ -155,7 +156,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CKEDITOR CONFIGS
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
-CKEDITOR_BASEPATH = os.path.join("static", "ckeditor", "ckeditor")
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
@@ -163,3 +163,5 @@ CKEDITOR_CONFIGS = {
         'height': '500',
     }
 }
+
+
