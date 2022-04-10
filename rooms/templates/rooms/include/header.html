@@ -31,6 +31,33 @@
                         {% endfor %}
                     </ul>
                 </li>
+                
+                {% if request_joined_or_quited and is_mentor %}
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" role="button" id="navbarRequestJoined" data-bs-toggle="dropdown" aria-expanded="false">
+                        Permintaan
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarRequestJoined">
+                        {% for r in request_joined_or_quited %}
+                        {% if request.user in r.to_room.mentor.all and r.choices == "join" %}
+                            <li>
+                                <a href="#" type="button" onclick="acceptJoinedUser('{{ r.from_user }}', '{{ r.to_room.title }}', '{{ r.to_room.pk }}');" class="dropdown-item">
+                                    {{ r.message }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if request.user in r.to_room.mentor.all and r.choices == "quit" %}
+                            <li>
+                                <a href="#" type="button" onclick="acceptQuitedUser('{{ r.from_user }}', '{{ r.to_room.title }}', '{{ r.to_room.pk }}');" class="dropdown-item">
+                                    {{ r.message }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% else %}
+                {% endif %}
                 <!-- <li class="nav-item">
                     <a class="nav-link disabled">Disabled</a>
                 </li> -->
@@ -81,3 +108,4 @@
     </div>
 </div>
 <!-- End Header -->
+

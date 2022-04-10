@@ -34,4 +34,3 @@ class Account(models.Model):
     
     def __str__(self) -> str:
         return self.user.username
-

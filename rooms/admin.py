@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rooms.models import Room
+from rooms.models import Room, AuthenticatedJoinQuitRoom
 
 class RoomAdmin(admin.ModelAdmin):
     prepopulated_fields = {
@@ -7,3 +7,4 @@ class RoomAdmin(admin.ModelAdmin):
     }
     
 admin.site.register(Room, RoomAdmin)
+admin.site.register(AuthenticatedJoinQuitRoom)

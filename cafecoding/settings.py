@@ -33,7 +33,10 @@ if os.environ.get("DEBUG"):
     print(DEBUG)
 
 ALLOWED_HOSTS = [
-    "*",
+    "localhost",
+    "127.0.0.1",
+    "cafecoding.herokuapp.com",
+    "fajhrinazgul.pythonanywhere.com",
 ]
 
 if os.environ.get("ALLOWED_HOSTS"):
@@ -160,7 +163,7 @@ CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
         'width': 'auto',
-        'height': '500',
+        'height': '300',
     }
 }
 

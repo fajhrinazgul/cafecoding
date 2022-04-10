@@ -4,14 +4,14 @@ from django.utils.translation import gettext
 from django.views import generic
 from django.contrib.auth.models import User 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpRequest
 from django.db.models import Q 
 from functools import reduce
 import operator
 
 from rooms.forms import RoomEditForm
 
-from rooms.models import Room
+from rooms.models import Room, AuthenticatedJoinQuitRoom
 
 class IndexView(generic.ListView, LoginRequiredMixin):
     """Halaman Utama
@@ -33,8 +33,27 @@ class IndexView(generic.ListView, LoginRequiredMixin):
                 f"Silahkan login terlebih dahulu sebelum melanjutkan ke halaman utama <b>Kafe Koding</b>."
             ))
             return redirect("account:login")
-        return render(request, self.template_name, {self.context_object_name: self.get_queryset(),
-                                                    "is_index_active": self.is_index_active})
+        else:
+            request_joined_or_quited = AuthenticatedJoinQuitRoom.objects.all() # Permintaan bergabung
+            is_waiting = ""
+            is_mentor = False
+            for rjq in request_joined_or_quited:
+                if self.request.user == rjq.from_user and self.object == rjq.to_room:
+                    if rjq.choices == "join":
+                        is_waiting = gettext("Menunggu Konfirmasi Gabung")
+                    else:
+                        is_waiting = gettext("Menunggu Konfirmasi keluar")
+                else:
+                    is_waiting = False
+                if self.request.user in rjq.to_room.mentor.all():
+                    is_mentor = True
+                else:
+                    is_mentor = False
+            return render(request, self.template_name, {self.context_object_name: self.get_queryset(),
+                                                        "is_index_active": self.is_index_active,
+                                                        "request_joined_or_quited": request_joined_or_quited,
+                                                        "is_mentor": is_mentor,
+                                                        "is_waiting": is_waiting})
 
 class RoomDetailView(generic.DetailView, LoginRequiredMixin):
     """Halaman detail tentang kelas
@@ -47,12 +66,30 @@ class RoomDetailView(generic.DetailView, LoginRequiredMixin):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        request_joined_or_quited = AuthenticatedJoinQuitRoom.objects.all() # Permintaan bergabung
+        is_waiting = ""
+        is_mentor = False
+        for rjq in request_joined_or_quited:
+            if self.request.user == rjq.from_user and self.object == rjq.to_room:
+                if rjq.choices == "join":
+                    is_waiting = gettext("Menunggu Konfirmasi Gabung")
+                else:
+                    is_waiting = gettext("Menunggu Konfirmasi keluar")
+            else:
+                is_waiting = False
+            if self.request.user in rjq.to_room.mentor.all():
+                is_mentor = True
+            else:
+                is_mentor = False
+        context["request_joined_or_quited"] = request_joined_or_quited
+        context["is_waiting"] = is_waiting
+        context["is_mentor"] = is_mentor
         context["rooms"] = Room.objects.all()
         context["is_room_active"] = True # Active Web
         return context
 
-def join_room(request, pk, username):
-    """Fungsi untuk membuat pengguna bergabung ke dalam kelas
+def join_room(request, room_pk, username):
+    """Fungsi untuk membuat pengguna bergabung ke dalam kelas tetapi harus melalui persetujuan dari admin terlebih dahulu.
 
     Args:
         request (_type_): _description_
@@ -62,30 +99,68 @@ def join_room(request, pk, username):
     Returns:
         _type_: _description_
     """
-    print(pk)
-    print(username)
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return HttpResponse("<h1>Pengguna Tidak Terdaftar</h1>")
-    try:
-        room = Room.objects.get(id=pk)
-    except Room.DoesNotExist:
-        return HttpResponse("<h1>Pengguna Tidak Terdaftar</h1>")
-    if user in room.member.all():
-        # Jika pengguna telah bergabung ke dalam grub kelas
-        messages.error(request, gettext(
-            f"Mohon maaf anda sudah bergabung ke dalam kelas ini."
-        ))
+    if not request.user.is_authenticated:
+        return redirect("account:login")
     else:
-        room.member.add(user)
-        room.save()
-        messages.success(request, gettext(
-            f"Terima kasih, anda telah berhasil bergabung di kelas ini."
-        ))
-    return redirect(f"/room/{room.slug}/#content")
+        room = get_object_or_404(Room, pk=room_pk)
+        user = get_object_or_404(User, username=username)
+        if user in room.member.all():
+            # Jika pengguna telah bergabung ke dalam grub kelas
+            messages.error(request, gettext(
+                f"Mohon maaf anda sudah bergabung ke dalam kelas ini."
+            ))
+        else:
+            # room.member.add(user)
+            # room.save()
+            auth = AuthenticatedJoinQuitRoom.objects.create(to_room=room, from_user=user, choices="join")
+            messages.success(request, gettext(
+                f"Terima kasih, permintaan anda menunggu konfirmasi dari mentor room ini."
+            ))
+        return redirect(f"/room/{room.slug}/#content")
 
-def quit_room(request, pk, username):
+def join_room_accepted(request, room_pk, username):
+    """Setelah di konfirmasi oleh mentor maka pengguna bisa bergabung ke dalam room
+
+    Args:
+        request (_type_): _description_
+        pk (_type_): room.pk
+        username (_type_): username
+    """
+    if not request.user.is_authenticated:
+        return redirect("account:login")
+    else:
+        user = get_object_or_404(User, username=username)
+        room = get_object_or_404(Room, pk=room_pk)
+        joined = Room.objects.join_room(room_pk, username)
+        if joined:
+            auth = AuthenticatedJoinQuitRoom.objects.get(to_room=room, from_user=user, choices="join")
+            auth.delete()
+            messages.success(request, gettext("Akun dengan nama pengguna %s di ijinkan bergabung ke dalam room %s" % (user.username, room)))
+            return redirect(f"/room/{room.slug}/#content")
+
+def join_room_rejected(request, room_pk, username):
+    """Jika mentor tidak mengijinkan pengguna untuk bergabung ke dalam room
+
+    Args:
+        request (_type_): _description_
+        room_pk (_type_): _description_
+        username (_type_): _description_
+    """
+    if not request.user.is_authenticated:
+        return redirect("account:login")
+    else:
+        room = get_object_or_404(Room, pk=room_pk)
+        user = get_object_or_404(User, username=username)
+        auth = get_object_or_404(AuthenticatedJoinQuitRoom, to_room=room, from_user=user)
+        if auth:
+            auth.delete()
+            messages.warning(request, gettext(f"{user} tidak di ijinkan masuk kedalam room {room}."))
+            return redirect(f"/room/{room.slug}/#content")
+        else:
+            messages.error(request, gettext(f"Ada sesuatu yang salah."))
+            return redirect(f"/room/{room.slug}/#content")
+
+def quit_room(request, room_pk, username):
     """Fungsi untuk membuat pengguna keluar dari kelas
 
     Args:
@@ -96,29 +171,65 @@ def quit_room(request, pk, username):
     Returns:
         _type_: _description_
     """
-    print(pk)
-    print(username)
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return HttpResponse("<h1>Pengguna Tidak Terdaftar</h1>")
-    try:
-        room = Room.objects.get(id=pk)
-    except Room.DoesNotExist:
-        return HttpResponse("<h1>Pengguna Tidak Terdaftar</h1>")
-    if user in room.member.all():
-        # Jika pengguna telah bergabung ke dalam grub kelas
-        # Maka bisa dikeluarkan.
-        room.member.remove(user)
-        room.save()
-        messages.success(request, gettext(
-            f"Anda telah berhasil keluar dari kelas ini."
-        ))
+    if not request.user.is_authenticated:
+        return redirect("account:login")
     else:
-        messages.error(request, gettext(
-            f"Mohon maaf, anda belum bergabung. Bagaimana bisa dikeluarkan hahahaha"
-        ))
-    return redirect(f"/room/{room.slug}/#content")
+        user = get_object_or_404(User, username=username)
+        room = get_object_or_404(Room, pk=room_pk)
+        if user in room.member.all():
+            # Jika pengguna telah bergabung ke dalam grub kelas
+            # Maka bisa dikeluarkan.
+            auth = AuthenticatedJoinQuitRoom.objects.create(to_room=room, from_user=user, choices="quit")
+            messages.success(request, gettext(
+                f"Terimakasih, permintaain keluar sedang di konfirmasi dari mentor room ini."
+            ))
+        else:
+            messages.error(request, gettext(
+                f"Mohon maaf, anda belum bergabung. Bagaimana bisa dikeluarkan hahahaha"
+            ))
+        return redirect(f"/room/{room.slug}/#content")
+    
+def quit_room_accepted(request, room_pk, username):
+    """Setelah di konfirmasi oleh mentor maka pengguna akan keluar dari room
+
+    Args:
+        request (_type_): _description_
+        pk (_type_): room.pk
+        username (_type_): username
+    """
+    if not request.user.is_authenticated:
+        return redirect("account:login")
+    else:
+        room = get_object_or_404(Room, pk=room_pk)
+        user = get_object_or_404(User, username=username)
+        quited = Room.objects.quit_room(room_pk, username)
+        if quited:
+            auth = AuthenticatedJoinQuitRoom.objects.get(to_room=room, from_user=user, choices="quit")
+            auth.delete()
+            messages.success(request, gettext("Akun dengan nama pengguna %s di ijinkan keluar dari room %s" % (user, room)))
+            return redirect(f"/room/{room.slug}/#content")
+
+def quit_room_rejected(request, room_pk, username):
+    """Jika mentor tidak mengijinkan pengguna untuk keluar room
+
+    Args:
+        request (_type_): _description_
+        room_pk (_type_): _description_
+        username (_type_): _description_
+    """
+    if not request.user.is_authenticated:
+        return redirect("account:login")
+    else:
+        room = get_object_or_404(Room, pk=room_pk)
+        user = get_object_or_404(User, username=username)
+        auth = get_object_or_404(AuthenticatedJoinQuitRoom, to_room=room, from_user=user)
+        if auth:
+            auth.delete()
+            messages.warning(request, gettext(f"{user} tidak di ijinkan keluar room {room}."))
+            return redirect(f"/room/{room.slug}/#content")
+        else:
+            messages.error(request, gettext(f"Ada sesuatu yang salah."))
+            return redirect(f"/room/{room.slug}/#content")
 
 class RoomSearchListView(generic.ListView, LoginRequiredMixin):
     """Render pencarian

@@ -11,10 +11,15 @@
                 <h1 class="text-danger fw-bold text-decoration-underline">
                     {% trans "Kelas" %} {{ room.title }}
                 </h1>
-                {% if not request.user in room.mentor.all and not request.user in room.member.all %}
+                {% if not request.user in room.mentor.all and not request.user in room.member.all and not is_waiting %}
                     <button type="button" class="btn btn-primary" onclick="joinTheGrub();">{% trans "Gabung Room" %}</button>
                 {% endif %}
-                {% if not request.user in room.mentor.all and request.user in room.member.all %}
+                {% if is_waiting  %}
+                    <button class="btn btn-warning">
+                        {{ is_waiting }}
+                    </button>
+                {% endif %}
+                {% if not request.user in room.mentor.all and request.user in room.member.all and not is_waiting %}
                     <button type="button" class="btn btn-danger" onclick="quitTheGrub();">{% trans "Keluar Room" %}</button>
                 {% endif %}
                 {% if request.user in room.mentor.all %}
